@@ -16,10 +16,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from sendshow import views
+from sendman import maviews
 
 
 urlpatterns = [
     url(r'^$',views.index),
-url(r'^page',views.page),
+    url(r'^sendcode/',maviews.sendcode,name='sendcode'),
+    url(r'^restart/',maviews.restart),
+    url(r'^page',views.page),
     url(r'^admin/', admin.site.urls),
 ]

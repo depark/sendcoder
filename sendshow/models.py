@@ -4,8 +4,9 @@ from django.db import models
 
 
 ASSET_STATUS = (
-    (0,'在用'),
-    (1,'闲置'),
+    (0,'未知'),
+    (1,'停止'),
+    (2,'运行')
 )
 
 SERVICE_STATUS = (
@@ -19,17 +20,19 @@ class Host(models.Model):
     主机列表
     '''
 
-    ip = models.CharField(max_length=32, blank=True, null=True, verbose_name=u"主机IP")
+    ip = models.CharField(max_length=32, unique=True,blank=True, null=False, verbose_name=u"主机IP")
     other_ip = models.CharField(max_length=255, blank=True, null=True, verbose_name=u"其他IP")
     hostname = models.CharField(unique=True, max_length=128, verbose_name=u"主机名")
-    port = models.IntegerField(blank=True, null=True, verbose_name=u"端口号")
-    username = models.CharField(max_length=16, blank=True, null=True, verbose_name=u"管理用户名")
-    password = models.CharField(max_length=256, blank=True, null=True, verbose_name=u"密码")
-    system_type = models.CharField(max_length=32, blank=True, null=True, verbose_name=u"系统类型")
-    status = models.IntegerField(choices=ASSET_STATUS, blank=True, null=True, default=1, verbose_name=u"机器状态")
+    port = models.IntegerField(blank=True, null=True,default=22, verbose_name=u"端口号")
+    #username = models.CharField(max_length=16, blank=True, null=True, verbose_name=u"管理用户名")
+    #password = models.CharField(max_length=256, blank=True, null=True, verbose_name=u"密码")
+    #system_type = models.CharField(max_length=32, blank=True, null=True, verbose_name=u"系统类型")
+    status = models.IntegerField(choices=ASSET_STATUS,verbose_name="服务运行状态")
     date_added = models.DateTimeField(auto_now=True, null=True)
-    is_active = models.BooleanField(default=True, verbose_name=u"是否激活")
+    #is_active = models.BooleanField(default=True, verbose_name=u"是否激活")
     comment = models.CharField(max_length=128, blank=True, null=True, verbose_name=u"备注")
+    monitor = models.CharField(max_length=128,blank=True,verbose_name=u'监测地址')
+
 
 
     def __str__(self):

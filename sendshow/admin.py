@@ -5,8 +5,8 @@ from sendshow.models import *
 # Register your models here.
 
 class  Host_admin(admin.ModelAdmin):
-    list_display = ('id','hostname', 'status','date_added')
-
+    list_display = ('id','hostname', 'status','date_added','monitor')
+    readonly_fields = ('status',)
 
 class Project_admin(admin.ModelAdmin):
     list_display = ('name','person')

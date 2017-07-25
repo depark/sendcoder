@@ -2,18 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script  type="text/javascript"  src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
-<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-      integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+    <script src="/static/js/layer.js"></script>
     <title>{{ title }}</title>
 </head>
 <body>
@@ -22,13 +23,13 @@
     <h1>应用列表</h1>
     {% for i in pro %}
     <table class="table table-bordered">
-      <caption >{{ i.name }}  {{ i.get_type_display }} <p type='button' class="btn btn-success">发布</p> </caption>
+      <caption ><ui>{{ i.name }}</ui>  {{ i.get_type_display }} <p type='button' class="btn btn-success" onclick="sendcode()">发布</p> </caption>
       <thead>
         <tr>
           <th>id</th>
           <th>ip</th>
-          <th>状态</th>
           <th>操作</th>
+          <th>状态</th>
         </tr>
       </thead>
       <tbody>
@@ -36,25 +37,66 @@
         <tr>
           <th scope="row">{{ forloop.counter }}</th>
           <td>{{ j.ip }}</td>
-          <td><p  class="btn btn-success">运行中</p> <p  class="btn btn-danger">停止</p></td>
-          <td><button id="restart{{ j.ip }}" class="btn btn-default" type="submit">重启</button> <button type="button" class="btn btn-danger">停止</button></td>
+          <td><span><button   class="btn  btn-success"   >重启 {{ i.get_type_display }}</button> </span></td>
+        <td>
+              {% if j.status == 0 %}
+                  <p  class="btn btn-warning">{{ j.get_status_display }}</p>
+               {% elif j.status == 1 %}
+                  <p  class="btn btn-danger">{{ j.get_status_display }}</p>
+                {% else %}
+                  <p  class="btn btn-success">{{ j.get_status_display }}</p>
+            {% endif %}
+          </td>
         </tr>
       {% endfor %}
       </tbody>
 
     </table>
  {% endfor %}
-        <p><input id='all' type="button" class="btn btn-primary btn-lg"  value="一键发布所有应用服务" onclick="display()" > </p>
+        <button id='all' type="button" class="btn btn-primary btn-lg" >一键发布所有应用服务</button>
   </div>
 
 </div>
+
 </body>
 <script>
-   function display() {
-       /-- alert('发布中。。。。')--/
-       window.open ("page")
-       this.
-   }
+    $('#all').click(function() {
+        $.get('/sendcode/',{'service':'all'},function (ret) {
+
+        })
+    });
+{#    $('#restart').click(function () {#}
+{#       /*layer.msg('加载中', {#}
+{#       icon: 1 ,#}
+{#       shade: 0.01#}
+{#       });#}
+{#       $.get('/restart/',function (ret) {#}
+{#           layer.msg(ret, {#}
+{#       icon: 1 ,#}
+{#       shade: 0.01#}
+{#       });#}
+{#*/#}
+{#       var re = $(this);#}
+{#       alert(re.length);#}
+{#       })#}
+
+    $("span").click(function () {
+        layer.msg('重启中', {icon: 16,shade: 0.01});
+        var re = $(this).parent().prev().text();
+        $.get('/restart/',{'server':re},function (ret) {
+            layer.msg(ret,{icon: 1 ,shade:0.01});
+        })
+
+    })
+
+    /*function restart() {
+        var re = $(this).text();
+        alert(re);
+        console.log(re)
+
+    }*/
+
+
 </script>
 
 </html>
