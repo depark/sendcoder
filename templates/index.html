@@ -23,7 +23,7 @@
     <h1>应用列表</h1>
     {% for i in pro %}
     <table class="table table-bordered">
-      <caption ><ui>{{ i.name }}</ui>  {{ i.get_type_display }} <p type='button' class="btn btn-success" onclick="sendcode()">发布</p> </caption>
+      <caption ><h4>{{ i.name }} {{ i.get_type_display }}</h4>   <p type='button' class="btn btn-success" onclick="sendcode()">发布</p> </caption>
       <thead>
         <tr>
           <th>id</th>

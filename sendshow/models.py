@@ -24,14 +24,14 @@ class Host(models.Model):
     other_ip = models.CharField(max_length=255, blank=True, null=True, verbose_name=u"其他IP")
     hostname = models.CharField(unique=True, max_length=128, verbose_name=u"主机名")
     port = models.IntegerField(blank=True, null=True,default=22, verbose_name=u"端口号")
-    #username = models.CharField(max_length=16, blank=True, null=True, verbose_name=u"管理用户名")
-    #password = models.CharField(max_length=256, blank=True, null=True, verbose_name=u"密码")
+    username = models.CharField(max_length=16, default='root',blank=True, null=True, verbose_name=u"管理用户名")
+    password = models.CharField(max_length=256, blank=True, null=True, verbose_name=u"密码")
     #system_type = models.CharField(max_length=32, blank=True, null=True, verbose_name=u"系统类型")
-    status = models.IntegerField(choices=ASSET_STATUS,verbose_name="服务运行状态")
+    status = models.IntegerField(choices=ASSET_STATUS,default=0,verbose_name="服务运行状态")
+    type = models.IntegerField(choices=SERVICE_STATUS,default=0,verbose_name="服务还是应用")
     date_added = models.DateTimeField(auto_now=True, null=True)
     #is_active = models.BooleanField(default=True, verbose_name=u"是否激活")
     comment = models.CharField(max_length=128, blank=True, null=True, verbose_name=u"备注")
-    monitor = models.CharField(max_length=128,blank=True,verbose_name=u'监测地址')
 
 
 
@@ -44,7 +44,7 @@ class Service(models.Model):
     应用或服务列表
     '''
     name = models.CharField(max_length=50,verbose_name=u'应用/服务名')
-    type = models.IntegerField(choices=SERVICE_STATUS,verbose_name='服务还是应用')
+    type = models.IntegerField(choices=SERVICE_STATUS,default=0,verbose_name='服务还是应用')
     hosts = models.ManyToManyField(Host,verbose_name=u'主机')
 
 

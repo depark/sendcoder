@@ -7,7 +7,7 @@ from sendmo.api import write_db
 
 
 def index(request):
-    pro = Service.objects.all()
+    pro = Service.objects.all().order_by()
     title = 'service list'
     #write_db()
     return render_to_response('index.html',locals())

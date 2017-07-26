@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_crontab',
     'sendlog',
     'sendman',
     'sendmo',
@@ -133,3 +134,5 @@ STATICFILES_DIRS = (
     ("js", os.path.join(STATIC_ROOT,'js')),
     ("img", os.path.join(STATIC_ROOT,'img')),
 )
+
+
