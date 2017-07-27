@@ -1,6 +1,6 @@
 from django.shortcuts import render,render_to_response,HttpResponse
 from sendshow.models import *
-from sendmo.api import write_db
+from sendmo.api import *
 
 # Create your views here.
 
@@ -9,7 +9,7 @@ from sendmo.api import write_db
 def index(request):
     pro = Service.objects.all().order_by()
     title = 'service list'
-    #write_db()
+    thread(m='t')
     return render_to_response('index.html',locals())
 
 

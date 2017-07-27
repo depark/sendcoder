@@ -23,7 +23,7 @@
     <h1>应用列表</h1>
     {% for i in pro %}
     <table class="table table-bordered">
-      <caption ><h4>{{ i.name }} {{ i.get_type_display }}</h4>   <p type='button' class="btn btn-success" onclick="sendcode()">发布</p> </caption>
+      <caption ><h4>{{ i.name }} </h4>  <ul type='button' class="btn btn-success">发布</ul> </caption>
       <thead>
         <tr>
           <th>id</th>
@@ -54,40 +54,71 @@
     </table>
  {% endfor %}
         <button id='all' type="button" class="btn btn-primary btn-lg" >一键发布所有应用服务</button>
+    <button id='test' type="button" class="btn btn-primary btn-lg" >test</button>
   </div>
 
 </div>
 
 </body>
 <script>
-    $('#all').click(function() {
-        $.get('/sendcode/',{'service':'all'},function (ret) {
+    $('#test').click(function () {
+        //var index = layer.load(4, {shade: false}); //0代表加载的风格，支持0-2
+//loading层
+        var index = layer.load(2)  //.1透明度的白色背景}))
+        index.close()
+    })
 
+
+
+    $('#all').click(function() {
+        layer.msg('正在部署...',{time:0,shade:0.3})
+        $.get('/sendcode/',{'service':'all'},function (ret) {
+            var re = JSON.parse(ret)
+            if (re.status == 0)
+            {
+                 layer.msg('部署成功',{icon: 1 ,shade:0.01});
+            }
+            else
+            {
+               layer.msg(re.result+ '\n部署失败',{icon: 2 ,shade:0.01});
+            }
         })
     });
-{#    $('#restart').click(function () {#}
-{#       /*layer.msg('加载中', {#}
-{#       icon: 1 ,#}
-{#       shade: 0.01#}
-{#       });#}
-{#       $.get('/restart/',function (ret) {#}
-{#           layer.msg(ret, {#}
-{#       icon: 1 ,#}
-{#       shade: 0.01#}
-{#       });#}
-{#*/#}
-{#       var re = $(this);#}
-{#       alert(re.length);#}
-{#       })#}
+
+    $("ul").click(function () {
+        var res = $(this).prev().text()
+        layer.msg(res+'  部署中。。。',{ time:0,shade:0.3 })
+        $.get('/sendcode/',{'service':res},function (ret) {
+            var re = JSON.parse(ret)
+            if (re.status == 0)
+            {
+                 layer.msg(res+' 发布成功',{icon: 1 ,shade:0.01});
+            }
+            else
+            {
+               layer.msg(re.result+ '\n部署失败',{icon: 2 ,shade:0.01});
+            }
+        })
+    })
 
     $("span").click(function () {
         layer.msg('重启中', {icon: 16,shade: 0.01});
         var re = $(this).parent().prev().text();
-        $.get('/restart/',{'server':re},function (ret) {
-            layer.msg(ret,{icon: 1 ,shade:0.01});
+        $.get('/restart/',{'server':re},function (re) {
+            var res = JSON.parse(re)
+            if (res.status == 0)
+            {
+                 layer.msg(res.result,{icon: 1 ,shade:0.01});
+            }
+            else
+            {
+               layer.msg(res.result+ '\n重启失败',{icon: 2 ,shade:0.01});
+            }
         })
 
     })
+
+
 
     /*function restart() {
         var re = $(this).text();
