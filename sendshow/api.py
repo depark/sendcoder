@@ -2,6 +2,7 @@ import paramiko
 from sendshow.models import *
 from paramiko.ssh_exception import AuthenticationException,SSHException,NoValidConnectionsError
 from socket import timeout
+from time import sleep
 
 def run(command,server):
     se = Host.objects.get(ip=server)
@@ -13,7 +14,7 @@ def run(command,server):
         t=paramiko.SSHClient()
         t.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         t.connect(hostname=server,username=user,password=password,port=port,timeout=3)
-        stdin, stdout, stderr = t.exec_command(command)
+        stdin, stdout, stderr = t.exec_command(command,get_pty=False)
         out = stdout.read()
         err = stderr.read()
         if err:
@@ -38,19 +39,20 @@ def run(command,server):
     return data
 
 
-
+#发布
 def Release(sername):
-    re = 'bash /opt/software/test.sh '
-    result = run(command=re+sername,server='192.168.1.27')
+    re = 'bash /home/ssic/saas2017-4-1/bushu.sh '
+    print(re+sername)
+    result = run(command=re+sername,server='172.16.1.242')
     return result
 
 
 def restart_server(server):
-    restart_app = '/usr/local/tomcat/bin/shutdown.sh;/usr/local/tomcat/bin/startup.sh'
-    start_app = '/usr/local/tomcat/bin/startup.sh'
+    #/usr/local/tomcat7/bin/shutdown.sh
+    restart_app = 'pkill -9 java;/usr/local/tomcat7/bin/startup.sh'
+    start_app = '/usr/local/tomcat7/bin/startup.sh'
     restart_ser = 'pkill tmux; tmux new-session -d -s dubbo "java -jar /root/*.jar"'
     se = Host.objects.get(ip=server)
-    print('type is '+str(se.type))
     #应用
     if se.type == 0:
         if se.status != 2:

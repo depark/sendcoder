@@ -7,9 +7,11 @@ from sendmo.api import *
 
 
 def index(request):
-    pro = Service.objects.all().order_by()
+    pro_ser = Service.objects.all().filter(type=0)
+    pro_hand = Service.objects.all().filter(type=1)
+    type = Service.objects.all().values('type').distinct()
     title = 'service list'
-    thread(m='t')
+    #thread(m='t')
     return render_to_response('index.html',locals())
 
 

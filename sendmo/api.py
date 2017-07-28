@@ -9,9 +9,11 @@ import os,configparser
 import socket
 import threading,multiprocessing
 import django
-
+from sendshow.api import *
 import smtplib
 from email.mime.text import MIMEText
+from time import sleep
+from config import *
 
 sender = 'liuhua_yang@ssic.cn'
 smtpserver = 'smtp.263xmail.com'
@@ -57,6 +59,7 @@ def check_dubbo(ip):
         if ip in a:
             return 0
         else:
+            print(ip+' not in dubbo')
             return 1
     except URLError as e:
         return 2
@@ -71,6 +74,14 @@ def write_db(i):
     elif s == 2:
         check_url(i,code=0)
 
+def auto_start():
+    h = Host.objects.exclude(status=2)
+    if len(h) != 0:
+        for i in h:
+            restart_server(i.ip)
+            print(i.ip+'  restart')
+
+
 
 def thread(m):
     django.setup()
@@ -83,7 +94,52 @@ def thread(m):
         for i in h:
             p = multiprocessing.Process(target=write_db,args=(i,))
             p.start()
+    sleep(5)
+    #auto_start()
 
 
+
+def mail(content):
+    # from_addr = input('发件人: ')
+    from_addr = username
+    # password = input('密码: ')
+    passwd = password
+    # to_addr = input('收件人: ')
+    to_addr = reveiver
+    # smtp_server = input('SMTP 服务器: ')
+    smtp_server = 'smtp.263xmail.com'
+    # subject = input('发件主题: ')
+    subject = "警告"
+    text = '''
+     <table width="800" border="0" cellpadding="0" cellspacing="0">
+          <tr>
+              <td bgcolor="#CECFAD" height="20" style="font-size:20px;color: red;" >*警告信息
+          </tr>
+          <tr>
+              <td bgcolor="#EFEBDE" height="100" style="font-size:13px">
+                     	<P style='font-size: large;'> %s %s down</P>
+
+                </td>
+          </tr>
+      </table>
+     ''' % (content.name,content.ip)
+    msg = MIMEText(text, 'html', 'utf-8')
+    # msg['From'] = _format_addr('Python爱好者 <%s>' % from_addr)
+    msg['From'] = from_addr
+    msg['To'] = to_addr
+    msg['Subject'] = subject
+    print(msg['From'])
+
+
+    try:
+        server = smtplib.SMTP(smtp_server, 25)
+        # server.set_debuglevel(1)
+        server.starttls()
+        server.login(from_addr, passwd)
+        server.sendmail(from_addr, [to_addr], msg.as_string())
+        server.quit()
+        print('邮件发送成功')
+    except Exception as e:
+        print("发送失败")
 
 

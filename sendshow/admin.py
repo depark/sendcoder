@@ -7,7 +7,7 @@ from sendshow.models import *
 class  Host_admin(admin.ModelAdmin):
     list_display = ('ip','id','hostname','type','port', 'status','date_added')
     readonly_fields = ('status',)
-
+    search_fields = ('ip',)
 
 
 class Service_admin(admin.ModelAdmin):

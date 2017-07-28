@@ -19,10 +19,13 @@
 </head>
 <body>
  <div class="container">
-    <div class="table-responsive">
-    <h1>应用列表</h1>
-    {% for i in pro %}
-    <table class="table table-bordered">
+    <div class="table-responsive  ">
+
+    {% for i in type %}
+        {% if i.type == 0 %}
+        <h1>应用列表</h1>
+    {% for i in pro_ser %}
+    <table class="table table-bordered table-hover" >
       <caption ><h4>{{ i.name }} </h4>  <ul type='button' class="btn btn-success">发布</ul> </caption>
       <thead>
         <tr>
@@ -36,11 +39,12 @@
       {% for j in i.hosts.all %}
         <tr>
           <th scope="row">{{ forloop.counter }}</th>
-          <td>{{ j.ip }}</td>
+          <td style='width: 200px'>{{ j.ip }}</td>
           <td><span><button   class="btn  btn-success"   >重启 {{ i.get_type_display }}</button> </span></td>
         <td>
               {% if j.status == 0 %}
-                  <p  class="btn btn-warning">{{ j.get_status_display }}</p>
+                 <p  class="btn btn-warning">{{ j.get_status_display }}</p>
+
                {% elif j.status == 1 %}
                   <p  class="btn btn-danger">{{ j.get_status_display }}</p>
                 {% else %}
@@ -50,11 +54,56 @@
         </tr>
       {% endfor %}
       </tbody>
-
     </table>
- {% endfor %}
+        <br><br>
+{% endfor %}
+    {% elif i.type == 1 %}
+        <h1>服务列表</h1>
+    {% for i in pro_hand %}
+    <table class="table table-bordered table-hover" >
+      <caption ><h4>{{ i.name }} </h4>  <ul type='button' class="btn btn-success">发布</ul> </caption>
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>ip</th>
+          <th>操作</th>
+          <th>状态</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for j in i.hosts.all %}
+        <tr>
+          <th scope="row">{{ forloop.counter }}</th>
+          <td style='width: 200px'>{{ j.ip }}</td>
+          <td><span><button   class="btn  btn-success"   >重启 {{ i.get_type_display }}</button> </span></td>
+        <td>
+              {% if j.status == 0 %}
+                 <p  class="btn btn-warning">{{ j.get_status_display }}</p>
+
+               {% elif j.status == 1 %}
+                  <p  class="btn btn-danger">{{ j.get_status_display }}</p>
+                {% else %}
+                  <p  class="btn btn-success">{{ j.get_status_display }}</p>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endfor %}
+        {% endif %}
+    {%  endfor %}
+
+
+
+
         <button id='all' type="button" class="btn btn-primary btn-lg" >一键发布所有应用服务</button>
-    <button id='test' type="button" class="btn btn-primary btn-lg" >test</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
   </div>
 
 </div>
@@ -67,8 +116,6 @@
         var index = layer.load(2)  //.1透明度的白色背景}))
         index.close()
     })
-
-
 
     $('#all').click(function() {
         layer.msg('正在部署...',{time:0,shade:0.3})
