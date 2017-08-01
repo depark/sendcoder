@@ -139,7 +139,8 @@
             var re = JSON.parse(ret)
             if (re.status == 0)
             {
-                 layer.msg(res+' 发布成功',{icon: 1 ,shade:0.01});
+                 layer.msg('发布成功   '+ re.result ,{icon: 1 ,shade:0.01});
+
             }
             else
             {

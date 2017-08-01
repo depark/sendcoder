@@ -3,9 +3,16 @@ from sendshow.models import *
 from paramiko.ssh_exception import AuthenticationException,SSHException,NoValidConnectionsError
 from socket import timeout
 from time import sleep
+import sys
+
 
 def run(command,server):
-    se = Host.objects.get(ip=server)
+    try:
+        se = Host.objects.get(ip=server)
+    except Host.DoesNotExist as e:
+        data = {'status': 1, 'result': '无法获取 {0} 用户名和密码'.format(server)}
+        return data
+        sys.exit()
     user = se.username
     password = se.password
     port = se.port
@@ -18,7 +25,10 @@ def run(command,server):
         out = stdout.read()
         err = stderr.read()
         status = 0
-        result = server+' success  Warning  '+str(err)
+        if err:
+            result = server+' success  Warning  '+str(err)
+        else:
+            result = server+' success'
     except SSHException as e:
         status = 1
         result = server+' 用户名或密码错误'
@@ -38,6 +48,7 @@ def run(command,server):
 #发布
 def Release(sername):
     re = 'bash /home/ssic/saas2017-4-1/bushu.sh '
+    #re = 'bash /opt/software/test.sh '
     print(re+sername)
     result = run(command=re+sername,server='172.16.1.242')
     return result
