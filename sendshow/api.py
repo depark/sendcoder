@@ -17,12 +17,8 @@ def run(command,server):
         stdin, stdout, stderr = t.exec_command(command,get_pty=False)
         out = stdout.read()
         err = stderr.read()
-        if err:
-            status = 1
-            result = 'error!!!'+server + str(err)
-        else:
-            status = 0
-            result = server+' success '
+        status = 0
+        result = server+' success  Warning  '+str(err)
     except SSHException as e:
         status = 1
         result = server+' 用户名或密码错误'
@@ -46,7 +42,7 @@ def Release(sername):
     result = run(command=re+sername,server='172.16.1.242')
     return result
 
-
+#重启应用
 def restart_server(server):
     #/usr/local/tomcat7/bin/shutdown.sh
     restart_app = 'pkill -9 java;/usr/local/tomcat7/bin/startup.sh'
