@@ -19,6 +19,7 @@
 </head>
 <body>
  <div class="container">
+ {% block container %}
     <div class="table-responsive  ">
 
     {% for i in type %}
@@ -105,7 +106,7 @@
     <br>
     <br>
   </div>
-
+ {% endblock %}
 </div>
 
 </body>

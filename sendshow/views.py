@@ -1,3 +1,4 @@
+#--*coding:utf-8 *--
 from django.shortcuts import render,render_to_response,HttpResponse
 from sendshow.models import *
 from sendmo.api import *
@@ -27,3 +28,12 @@ def index(request):
 @post_only
 def page(request):
     return HttpResponse('发布中....')
+
+#更新硬件信息
+def update(request):
+    pass
+
+def detial(request):
+    #id = request.GET['id']
+    #host = Host.objects.get(id=id)
+    return render_to_response('detial.html',locals())

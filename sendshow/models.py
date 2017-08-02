@@ -1,3 +1,4 @@
+#--*coding:utf-8 *--
 from django.db import models
 
 # Create your models here.
@@ -12,8 +13,13 @@ ASSET_STATUS = (
 SERVICE_STATUS = (
     (0,'应用'),
     (1,'服务'),
+    (2,'其他'),
 )
 
+VIRTUAL = (
+    (0,'虚拟机'),
+    (1,'物理机'),
+)
 
 class Host(models.Model):
     '''
@@ -21,16 +27,18 @@ class Host(models.Model):
     '''
 
     ip = models.CharField(max_length=32, unique=True,blank=True, null=False, verbose_name=u"主机IP")
-    other_ip = models.CharField(max_length=255, blank=True, null=True, verbose_name=u"其他IP")
     hostname = models.CharField(unique=True, max_length=128, verbose_name=u"主机名")
     port = models.IntegerField(blank=True, null=True,default=22, verbose_name=u"端口号")
     username = models.CharField(max_length=16, default='root',blank=True, null=True, verbose_name=u"管理用户名")
     password = models.CharField(max_length=256, blank=True, null=True, verbose_name=u"密码")
-    #system_type = models.CharField(max_length=32, blank=True, null=True, verbose_name=u"系统类型")
+    cpu = models.CharField(max_length=200,blank=True,null=True,verbose_name='cpu情况')
+    memory = models.CharField(max_length=20,blank=True,null=True,verbose_name='内存')
+    system = models.CharField(max_length=32,blank=True,null=True, verbose_name=u"系统类型")
+    disk = models.CharField(max_length=30,blank=True,null=True,verbose_name='硬盘')
     status = models.IntegerField(choices=ASSET_STATUS,default=0,verbose_name="服务运行状态")
     type = models.IntegerField(choices=SERVICE_STATUS,default=0,verbose_name="服务还是应用")
     date_added = models.DateTimeField(auto_now=True, null=True)
-    #is_active = models.BooleanField(default=True, verbose_name=u"是否激活")
+    is_vitual = models.IntegerField(choices=VIRTUAL,verbose_name='虚拟机还是物理机')
     comment = models.CharField(max_length=128, blank=True, null=True, verbose_name=u"备注")
 
 

@@ -1,3 +1,4 @@
+#--*coding:utf-8 *--
 #监测服务健康状态
 
 from sendshow.models import Host
