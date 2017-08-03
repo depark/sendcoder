@@ -8,7 +8,7 @@ from sendshow.api import *
 
 def sendcode(request):
     sername = request.GET['service']
-    print(sername)
+    sername = sername.strip()
     re = Release(sername)
     print(re)
     return HttpResponse(json.dumps(re))

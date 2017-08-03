@@ -3,9 +3,50 @@ from sendshow.models import *
 from paramiko.ssh_exception import AuthenticationException,SSHException,NoValidConnectionsError
 from socket import timeout
 from time import sleep
-import sys
+import sys,os
+import configparser
+from sendcoder.settings import BASE_DIR
+from sendshow.common import *
+import threading
 
 
+conf = configparser.ConfigParser()
+conf.read(os.path.join(BASE_DIR,'config.conf'))
+localpath = 'f:\\saas\\'
+coderemotepath = '/root/saaS/'
+sendremotepath = '/home/ssic/saas2017-4-1/saaS/'
+
+
+
+
+
+def transport(server):
+    localfile = localpath+server
+    code = coderemotepath+server
+    send = sendremotepath+server
+    h = Host.objects.get(ip='172.16.1.242')
+    t_put = remote(host='172.16.1.242',username=h.username,password=h.password,port=h.port)
+    t_get = remote(host='192.168.1.193',username='root',password='123456',port=22)
+
+    #全部发布
+    if server == 'all':
+        print('start to transfer '+coderemotepath+'>>>>'+localpath)
+        t_get.get(localpath=localpath, remotepath=coderemotepath)
+
+
+        print('start to transfer '+localpath+'>>>>'+sendremotepath)
+        t_put.put(localpath=localpath,remotepath=sendremotepath)
+    else:
+        #发布应用
+        print(code + '>>>>' + localfile)
+        t_get.get(localpath=localfile,remotepath=code)
+
+        print(localfile+' >>>>>'+send)
+        t_put.put(localpath=localfile,remotepath=send)
+
+    print(server+'  代码上传成功')
+
+#执行命令
 def run(command,server):
     try:
         se = Host.objects.get(ip=server)
@@ -44,13 +85,13 @@ def run(command,server):
     data = {'status':status,'result':result}
     return data
 
-
 #发布
 def Release(sername):
     re = 'bash /home/ssic/saas2017-4-1/bushu.sh '
-    #re = 'bash /opt/software/test.sh '
-    print(re+sername)
+    print('start to handle '+sername)
+    transport(sername)
     result = run(command=re+sername,server='172.16.1.242')
+    #result = {'status':0,'result':'ok'}
     return result
 
 #重启应用

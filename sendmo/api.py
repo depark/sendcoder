@@ -60,7 +60,7 @@ def check_dubbo(ip):
         if ip in a:
             return 0
         else:
-            print(ip+' not in dubbo')
+            #print(ip+' not in dubbo')
             return 1
     except URLError as e:
         return 2
