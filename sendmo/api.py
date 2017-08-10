@@ -84,20 +84,19 @@ def auto_start():
 
 
 
-def thread(m):
-    django.setup()
+def thread(a):
+    code = check_dubbo('test')
+    if code == 2:
+        n = {'status': 1, 'result': 'dubbo 无法连接，检测失败'}
+        return n
     h = Host.objects.all()
-    if m == 't':
-        for i in h:
+    for i in h:
             t=threading.Thread(target=write_db,args=(i,))
             t.start()
-    if m == 'm':
-        for i in h:
-            p = multiprocessing.Process(target=write_db,args=(i,))
-            p.start()
-    sleep(5)
+    t.join()
+    n = {'status':0,'result':a+'检测成功'}
     #auto_start()
-
+    return n
 
 
 def mail(content):

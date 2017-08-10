@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponse
 from sendshow.models import Host
 import time
 import json
+from sendmo.api import *
 from sendshow.api import *
 # Create your views here.
 
@@ -22,3 +23,11 @@ def restart(request):
         re = {'status': 1, 'result': server+'  连接错误'}
     print(re)
     return HttpResponse(json.dumps(re))
+
+
+
+def check(request):
+    ser = request.GET['server']
+    n = thread(ser)
+    print(n)
+    return HttpResponse(json.dumps(n))

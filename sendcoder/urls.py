@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^$',views.index),
     url(r'^sendcode/',maviews.sendcode,name='sendcode'),
     url(r'^restart/',maviews.restart),
+     url(r'check/',maviews.check),
     #url(r'^detial/(?P<id>[0-9]+)',views.detial,name='show_detial'),
     url(r'^detial/', views.detial, name='show_detial'),
     url(r'^update/',views.update,name='update'),

@@ -24,7 +24,7 @@
 
     {% for i in type %}
         {% if i.type == 0 %}
-        <h1>应用列表</h1>
+        <h1>应用列表 <button id="check" class="btn btn-success">检测</button></h1>
     {% for i in pro_ser %}
     <table class="table table-bordered table-hover" >
       <caption ><h4>{{ i.name }} </h4>  <ul type='button' class="btn btn-success">发布</ul> </caption>
@@ -111,6 +111,24 @@
 
 </body>
 <script>
+    $('#check').click(function () {
+         layer.msg('检测中',{time:0})
+        $.get('/check/',{'server':'check'},function (ret) {
+            var re = JSON.parse(ret)
+            if (re.status == 0)
+            {
+                layer.msg(re.result,{time:4000})
+                location.reload()
+            }
+            else
+            {
+                layer.msg(re.result,{icon:2,time:5000})
+            }
+        })
+
+    })
+
+
     $('#test').click(function () {
         //var index = layer.load(4, {shade: false}); //0代表加载的风格，支持0-2
 //loading层
