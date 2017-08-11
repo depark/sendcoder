@@ -33,7 +33,6 @@ def page(request):
 def update(request):
     pass
 
-def detial(request):
-    #id = request.GET['id']
-    #host = Host.objects.get(id=id)
-    return render_to_response('detial.html',locals())
+def detial(request,id):
+    server = Host.objects.get(id=id)
+    return render_to_response('detail.html', locals())

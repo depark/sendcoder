@@ -1,0 +1,16 @@
+
+
+cpu =  cat /proc/cpuinfo | grep processor  | wc -l      数量
+
+modole = cat /proc/cpuinfo | grep 'model name' | awk -F ':' '{print $2}'   类型
+
+
+cpu1 = echo `cat /proc/cpuinfo | grep 'model name' | awk -F ':' '{print $2}' | uniq`*`cat /proc/cpuinfo | grep processor  | wc -l`
+
+men = free -m | grep Mem | awk -F ' ' '{printf "%.2fG/%.2fG/%.2fG", $2/1024,$3/1024,$4/1024}'  --> total/used/free
+
+disk = lsblk | grep disk | gawk '{print $1,$4}'
+
+system = cat /etc/redhat-release
+
+

@@ -5,16 +5,16 @@
     <script  type="text/javascript"  src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
     <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
-<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/css/bootstrap.min.css"  >
 
 <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
-<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<link rel="stylesheet" href="/static/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/static/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 
-    <script src="/static/js/layer.js"></script>
+    <script src="/static/js/layer/layer.js"></script>
     <title>{{ title }}</title>
 </head>
 <body>
@@ -40,7 +40,7 @@
       {% for j in i.hosts.all %}
         <tr>
           <th scope="row">{{ forloop.counter }}</th>
-          <td style='width: 200px'>{{ j.ip }}</td>
+            <td style='width: 200px'><a href="{% url 'show_detail' j.id %}" >{{ j.ip }}</a></td>
           <td><span><button   class="btn  btn-success"   >重启 {{ i.get_type_display }}</button> </span></td>
         <td>
               {% if j.status == 0 %}
@@ -66,7 +66,7 @@
       <thead>
         <tr>
           <th>id</th>
-          <th>ip</th>
+          <th></th>
           <th>操作</th>
           <th>状态</th>
         </tr>
@@ -75,7 +75,7 @@
       {% for j in i.hosts.all %}
         <tr>
           <th scope="row">{{ forloop.counter }}</th>
-          <td style='width: 200px'>{{ j.ip }}</td>
+            <td style='width: 200px'><a href="{% url 'show_detail' j.id %}" >{{ j.ip }}</a></td>
           <td><span><button   class="btn  btn-success"   >重启 {{ i.get_type_display }}</button> </span></td>
         <td>
               {% if j.status == 0 %}
@@ -99,6 +99,7 @@
 
 
         <button id='all' type="button" class="btn btn-primary btn-lg" >一键发布所有应用服务</button>
+
     <br>
     <br>
     <br>
@@ -132,8 +133,11 @@
     $('#test').click(function () {
         //var index = layer.load(4, {shade: false}); //0代表加载的风格，支持0-2
 //loading层
-        var index = layer.load(2)  //.1透明度的白色背景}))
-        index.close()
+        var value = $('#input').val()
+        console.log(value)
+        alert(value)
+        //var index = layer.load(2)  //.1透明度的白色背景}))
+        //index.close()
     })
 
     $('#all').click(function() {

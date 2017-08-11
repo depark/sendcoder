@@ -1,0 +1,114 @@
+{% extends 'index.html' %}
+{% block container %}
+
+<h2 id="tables-hover-rows">{{ server.hostname }}</h2>
+    <p style="font-size: 30px;">主机详情</p><br><br><br>
+  <div class="bs-example" data-example-id="hoverable-table">
+    <table class="table table-hover">
+
+      <tbody>
+      <tr>
+          <th style="font-size: large;color: #1cc09f">id</th>
+          <td style="font-size: x-large" id="id">{{ server.id }}</td>
+        </tr>
+      <tr>
+          <th style="font-size: large;color: #1cc09f">主机名</th>
+          <td style="font-size: x-large" id='hostname'>{{ server.hostname }}</td>
+        </tr>
+        <tr>
+          <th style="font-size: large;color: #1cc09f">ip</th>
+          <td id = 'ip' style="font-size: x-large">{{ server.ip }}</td>
+        </tr>
+        <tr>
+          <th style="font-size: large;color: #1cc09f">应用类型</th>
+          <td style="font-size: x-large">{{ server.get_type_display }}</td>
+        </tr>
+       <tr>
+          <th style="font-size: large;color: #1cc09f">CPU</th>
+          <td style="font-size: x-large">{{ server.cpu }}</td>
+        </tr>
+       <tr>
+          <th style="font-size: large;color: #1cc09f">内存(total/used/free)</th>
+          <td style="font-size: x-large">{{ server.memory }}</td>
+        </tr>
+       <tr>
+          <th style="font-size: large;color: #1cc09f">硬盘</th>
+          <td style="font-size: x-large">{{ server.disk }}</td>
+        </tr>
+       <tr>
+          <th style="font-size: large;color: #1cc09f">系统 </th>
+          <td style="font-size: x-large">{{ server.system }}</td>
+        </tr>
+             <tr>
+          <th style="font-size: large;color: #1cc09f">增加日期 </th>
+          <td style="font-size: x-large">{{ server.date_added | date:'Y-m-d H:i:s'}}</td>
+        </tr>
+      </tbody>
+    </table>
+  <button id='update' type='button' class="btn btn-success">更新信息</button>
+  <a href="/" class="btn btn-success">返回首页</a>
+  <button id ='logshow' type="button" class="btn btn-success">实时日志展示</button>
+      <button id ='close' type="button" class="btn btn-success">关闭日志展示</button>
+  <div id="msg" style="font-size: large"></div>
+  <div id="log"></div>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  </div><!-- /example -->
+
+    <script>
+
+    $('#logshow').click(function () {
+        var messageContainer = $("#msg");
+        var serverid = $('#id').text();
+        var hostname = $('#hostname').val();
+        if ('WebSocket' in window) {
+            messageContainer.prepend("你的浏览器支持websocket");
+            var ws = new WebSocket("ws://"+window.location.host+"/logshow/");
+            ws.onopen = function () {
+                messageContainer.prepend("连接成功,准备显示日志"+hostname);
+                ws.send(serverid);
+            };
+            ws.onmessage = function (evt) {
+                messageContainer.prepend(evt.data)
+            }
+
+        } else
+        {
+            alert("你的浏览器不支持websocket");
+        }
+        window.s = ws
+    });
+    $('#close').click(function () {
+        if (window.s)
+        {
+            window.s.close();
+            console.log('websocket关闭');
+        }
+    });
+
+    $('#update').click(function () {
+        layer.msg('更新中',{time:0})
+        var ip = $('#ip').text()
+        $.get('/update/',{'ip':ip},function (ret) {
+            var re = JSON.parse(ret)
+            if (re.status == 0)
+            {
+                layer.msg('更新成功',{icon:1,time:30000})
+                location.reload()
+            }
+            else
+            {
+                layer.msg(re.result,{icon:2,time:30000})
+            }
+
+        })
+
+    })
+
+    </script>
+
+{% endblock %}

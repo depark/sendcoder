@@ -23,6 +23,12 @@ password = 'huahua1026'
 reveiver = '925161259@qq.com'
 
 
+cpu = """echo `cat /proc/cpuinfo | grep 'model name' | awk -F ':' '{print $2}' | uniq`*`cat /proc/cpuinfo | grep processor  | wc -l`"""
+mem = """free -m | grep Mem | awk -F ' ' '{printf "%.2fG/%.2fG/%.2fG", $2/1024,$3/1024,$4/1024}'"""
+disk = """lsblk | grep disk | gawk '{print $1,$4}'"""
+system = """cat /etc/redhat-release """
+
+
 
 def check_status(url):
     try:
@@ -82,8 +88,6 @@ def auto_start():
             restart_server(i.ip)
             print(i.ip+'  restart')
 
-
-
 def thread(a):
     code = check_dubbo('test')
     if code == 2:
@@ -97,7 +101,6 @@ def thread(a):
     n = {'status':0,'result':a+'检测成功'}
     #auto_start()
     return n
-
 
 def mail(content):
     # from_addr = input('发件人: ')
@@ -142,4 +145,20 @@ def mail(content):
     except Exception as e:
         print("发送失败")
 
+def update_info(ip):
+    host = Host.objects.get(ip=ip)
+    CPU = run(cpu,ip)
+    MEM = run(mem,ip)
+    DISK = run(disk,ip)
+    ossys = run(system,ip)
+    host.cpu = CPU['result'].replace('b','').replace('\\n','').replace("'","")
+    host.memory = MEM['result'].replace('b','').replace('\\n','').replace("'","")
+    host.disk = DISK['result'].replace('b','').replace('\\n','').replace("'","")
+    host.system = ossys['result'].replace('b','').replace('\\n','').replace("'","")
+    try:
+        host.save()
+        t = {'status':0,'result':'更新成功'}
+    except Exception as e:
+        t = {'status':1,'result':'更新失败'}
 
+    return t

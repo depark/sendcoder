@@ -57,7 +57,7 @@ def run(command,server):
     user = se.username
     password = se.password
     port = se.port
-    print(command)
+    #print(command)
     try:
         t=paramiko.SSHClient()
         t.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -67,9 +67,10 @@ def run(command,server):
         err = stderr.read()
         status = 0
         if err:
-            result = server+' success  Warning  '+str(err)
+            result = str(err)
+            print(result)
         else:
-            result = server+' success'
+            result = str(out)
     except SSHException as e:
         status = 1
         result = server+' 用户名或密码错误'
