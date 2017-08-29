@@ -63,14 +63,14 @@ def run(command,server):
         t.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         t.connect(hostname=server,username=user,password=password,port=port,timeout=3)
         stdin, stdout, stderr = t.exec_command(command,get_pty=False)
-        out = stdout.read()
-        err = stderr.read()
+        out = stdout.readlines()
+        err = stderr.readlines()
         status = 0
         if err:
-            result = str(err)
+            result = err
             print(result)
         else:
-            result = str(out)
+            result = out
     except SSHException as e:
         status = 1
         result = server+' 用户名或密码错误'
@@ -91,7 +91,12 @@ def Release(sername):
     re = 'bash /home/ssic/saas2017-4-1/bushu.sh '
     print('start to handle '+sername)
     transport(sername)
+    print('开始执行部署脚本')
     result = run(command=re+sername,server='172.16.1.242')
+    if result['status'] == 0:
+        print('部署脚本执行成功')
+    else:
+        print('部署失败  '+result['result'])
     #result = {'status':0,'result':'ok'}
     return result
 

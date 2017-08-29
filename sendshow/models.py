@@ -6,7 +6,7 @@ from django.db import models
 
 ASSET_STATUS = (
     (0,'未知'),
-    (1,'停止'),
+    (1,'停止中'),
     (2,'运行')
 )
 
@@ -29,11 +29,11 @@ class Host(models.Model):
     ip = models.CharField(max_length=32, unique=True,blank=True, null=False, verbose_name=u"主机IP")
     hostname = models.CharField(unique=True, max_length=128, verbose_name=u"主机名")
     port = models.IntegerField(blank=True, null=True,default=22, verbose_name=u"端口号")
-    username = models.CharField(max_length=16, default='root',blank=True, null=True, verbose_name=u"管理用户名")
+    username = models.CharField(max_length=32, default='root',blank=True, null=True, verbose_name=u"管理用户名")
     password = models.CharField(max_length=256, blank=True, null=True, verbose_name=u"密码")
     cpu = models.CharField(max_length=200,blank=True,null=True,verbose_name='cpu情况')
-    memory = models.CharField(max_length=20,blank=True,null=True,verbose_name='内存')
-    system = models.CharField(max_length=32,blank=True,null=True, verbose_name=u"系统类型")
+    memory = models.CharField(max_length=256,blank=True,null=True,verbose_name='内存')
+    system = models.CharField(max_length=256,blank=True,null=True, verbose_name=u"系统类型")
     disk = models.CharField(max_length=30,blank=True,null=True,verbose_name='硬盘')
     status = models.IntegerField(choices=ASSET_STATUS,default=0,verbose_name="服务运行状态")
     type = models.IntegerField(choices=SERVICE_STATUS,default=0,verbose_name="服务还是应用")

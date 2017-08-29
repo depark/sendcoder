@@ -1,4 +1,4 @@
-from django.shortcuts import render,HttpResponse
+from django.shortcuts import render,HttpResponse,render_to_response
 from sendshow.models import Host
 import time
 import json
@@ -6,6 +6,18 @@ from sendmo.api import *
 from sendshow.api import *
 from dwebsocket import *
 # Create your views here.
+
+
+def index(request):
+    pro_ser = Service.objects.all().filter(type=0)
+    pro_hand = Service.objects.all().filter(type=1)
+    type = Service.objects.all().values('type').distinct()
+    #n = thread('all')
+    title = 'service list'
+    #thread(m='t')
+    return render_to_response('index.html',locals())
+
+
 
 
 def sendcode(request):
@@ -32,6 +44,7 @@ def restart(request):
 
 def check(request):
     ser = request.GET['server']
+    print(ser)
     n = thread(ser)
     print(n)
     return HttpResponse(json.dumps(n))
@@ -43,11 +56,14 @@ def update(request):
     a=update_info(ip)
     return HttpResponse(json.dumps(a))
 
-@accept_websocket
+@require_websocket
 def logshow(request):
-    if request.is_websocket:
         print('start to websocket')
         print('websocket')
-        message = request.websocket
+        message = request.websocket.wait()
         print(message)
-        request.websocket.send('hello')
+        #request.websocket.send('hello')
+
+
+def show_host(request):
+    pass

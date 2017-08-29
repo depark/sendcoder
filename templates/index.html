@@ -17,6 +17,7 @@
     <script src="/static/js/layer/layer.js"></script>
     <title>{{ title }}</title>
 </head>
+
 <body>
  <div class="container">
  {% block container %}
@@ -95,11 +96,9 @@
         {% endif %}
     {%  endfor %}
 
-
-
-
-        <button id='all' type="button" class="btn btn-primary btn-lg" >一键发布所有应用服务</button>
-
+     <button id='all' type="button" class="btn btn-primary btn-lg" >一键发布所有应用服务</button>
+    <a href="/" class="btn btn-primary btn-lg">返回首页</a>
+{% endblock %}
     <br>
     <br>
     <br>
@@ -107,14 +106,20 @@
     <br>
     <br>
   </div>
- {% endblock %}
+
 </div>
 
+
+
+
 </body>
-<script>
+
+
+{% block script %}
+  <script>
     $('#check').click(function () {
          layer.msg('检测中',{time:0})
-        $.get('/check/',{'server':'check'},function (ret) {
+        $.get('/manage/check/',{'server':'check'},function (ret) {
             var re = JSON.parse(ret)
             if (re.status == 0)
             {
@@ -142,7 +147,7 @@
 
     $('#all').click(function() {
         layer.msg('正在部署...',{time:0,shade:0.3})
-        $.get('/sendcode/',{'service':'all'},function (ret) {
+        $.get('/manage/sendcode/',{'service':'all'},function (ret) {
             var re = JSON.parse(ret)
             if (re.status == 0)
             {
@@ -158,11 +163,11 @@
     $("ul").click(function () {
         var res = $(this).prev().text()
         layer.msg(res+'  部署中。。。',{ time:0,shade:0.3 })
-        $.get('/sendcode/',{'service':res},function (ret) {
+        $.get('/manage/sendcode/',{'service':res},function (ret) {
             var re = JSON.parse(ret)
             if (re.status == 0)
             {
-                 layer.msg('发布成功   '+ re.result ,{icon: 1 ,shade:0.01});
+                 layer.msg('发布成功   '+ re.result ,{time:0,icon: 1 ,shade:0.01});
 
             }
             else
@@ -175,11 +180,12 @@
     $("span").click(function () {
         layer.msg('重启中', {icon: 16,shade: 0.01});
         var re = $(this).parent().prev().text();
-        $.get('/restart/',{'server':re},function (re) {
+        $.get('/manage/restart/',{'server':re},function (re) {
             var res = JSON.parse(re)
             if (res.status == 0)
             {
                  layer.msg(res.result,{icon: 1 ,shade:0.01});
+                 location.reload();
             }
             else
             {
@@ -200,5 +206,6 @@
 
 
 </script>
+{% endblock %}
 
 </html>

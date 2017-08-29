@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+{% block container %}
+
+     <div class="table-responsive  ">
+     <h3>物理主机列表</h3>
+          <table class="table table-bordered table-hover" >
+               <thead>
+        <tr>
+          <th>id</th>
+          <th>主机名</th>
+          <th>ip</th>
+          <th>cpu</th>
+            <th>内存</th>
+            <th>硬盘</th>
+            <th>操作系统</th>
+            <th>状态</th>
+        </tr>
+               </thead>
+        <tbody>
+        {% for host in phy %}
+            <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td><a href="{% url 'show_detail' host.id %}" >{{ host.hostname }}</a></td>
+        <td>{{ host.ip }}</td>
+        <td>{{ host.cpu }}</td>
+        <td>{{ host.memory }}</td>
+        <td>{{ host.disk }}</td>
+        <td>{{ host.system }}</td>
+        <td>{{ host.get_status_display }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+          </table>
+     <a href="/" class="btn btn-success">返回首页</a>
+
+{% endblock %}

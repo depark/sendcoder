@@ -2,10 +2,16 @@
 {% block container %}
 
 <h2 id="tables-hover-rows">{{ server.hostname }}</h2>
-    <p style="font-size: 30px;">主机详情</p><br><br><br>
+    <p style="font-size: 30px;">主机详情</p>
+      <button id='update' type='button' class="btn btn-success">更新信息</button>
+  <a href="/" class="btn btn-success">返回首页</a>
+    <a href="{% url 'showphy' %}" class="btn btn-success">返回主机列表</a>
+  {% if vituals %}
+   <button id='create' type='button' class="btn btn-success">创建虚拟机</button>
+  {% endif %}
   <div class="bs-example" data-example-id="hoverable-table">
     <table class="table table-hover">
-
+<br><br><br>
       <tbody>
       <tr>
           <th style="font-size: large;color: #1cc09f">id</th>
@@ -23,6 +29,10 @@
           <th style="font-size: large;color: #1cc09f">应用类型</th>
           <td style="font-size: x-large">{{ server.get_type_display }}</td>
         </tr>
+      <tr>
+          <th style="font-size: large;color: #1cc09f">主机类型</th>
+          <td style="font-size: x-large">{{ server.get_is_vitual_display }}</td>
+        </tr>
        <tr>
           <th style="font-size: large;color: #1cc09f">CPU</th>
           <td style="font-size: x-large">{{ server.cpu }}</td>
@@ -39,18 +49,35 @@
           <th style="font-size: large;color: #1cc09f">系统 </th>
           <td style="font-size: x-large">{{ server.system }}</td>
         </tr>
+      <tr>
+          <th style="font-size: large;color: #1cc09f">状态 </th>
+          <td style="font-size: x-large">{{ server.get_status_display }}</td>
+        </tr>
              <tr>
           <th style="font-size: large;color: #1cc09f">增加日期 </th>
           <td style="font-size: x-large">{{ server.date_added | date:'Y-m-d H:i:s'}}</td>
         </tr>
+      {% if vituals %}
+      <tr>
+          <th style="font-size: large;color: #1cc09f">所属虚拟机 </th>
+          <td class="text-center" style="font-size: x-large">
+              <div class="text-left">
+                  {% for vitual in vituals %}
+                  <p>{{ vitual }}</p>
+                    {% endfor %}
+              </div>
+          </td>
+        </tr>
+      {% endif %}
       </tbody>
+
+
     </table>
-  <button id='update' type='button' class="btn btn-success">更新信息</button>
-  <a href="/" class="btn btn-success">返回首页</a>
-  <button id ='logshow' type="button" class="btn btn-success">实时日志展示</button>
-      <button id ='close' type="button" class="btn btn-success">关闭日志展示</button>
+
+  <!--<button id ='logshow' type="button" class="btn btn-success">实时日志展示</button>
+     <button id ='close' type="button" class="btn btn-success">关闭日志展示</button> -->
   <div id="msg" style="font-size: large"></div>
-  <div id="log"></div>
+  <div id="log" type="text" style="margin: auto"></div>
   <br>
   <br>
   <br>
@@ -59,56 +86,83 @@
   <br>
   </div><!-- /example -->
 
-    <script>
 
-    $('#logshow').click(function () {
-        var messageContainer = $("#msg");
+
+{% endblock %}
+
+
+{% block script %}
+    <script>
+        var messageContainer = $("#log");
         var serverid = $('#id').text();
         var hostname = $('#hostname').val();
+    $('#create').click(function () {
+        layer.open({
+        type: 2,
+        title: '创建主机',
+        shadeClose: true,
+        shade: 0.8,
+        area: ['500px', '50%'],
+        content: 'test/' //iframe的url
+});
+    })
+
+    $('#logshow').click(function () {
         if ('WebSocket' in window) {
-            messageContainer.prepend("你的浏览器支持websocket");
-            var ws = new WebSocket("ws://"+window.location.host+"/logshow/");
+            //messageContainer.prepend("你的浏览器支持websocket");
+            var ws = new WebSocket("ws://" + window.location.host + "/logshow/" + '?id=' + serverid);
             ws.onopen = function () {
-                messageContainer.prepend("连接成功,准备显示日志"+hostname);
-                ws.send(serverid);
-            };
-            ws.onmessage = function (evt) {
-                messageContainer.prepend(evt.data)
+                ws.send('start')
             }
 
-        } else
-        {
+            ws.onmessage = function (evt) {
+
+                messageContainer.prepend(evt.data + '<br>')
+            }
+        }
+        else {
             alert("你的浏览器不支持websocket");
         }
-        window.s = ws
-    });
+    })
+
+
     $('#close').click(function () {
-        if (window.s)
-        {
-            window.s.close();
-            console.log('websocket关闭');
+        var wsa = new WebSocket("ws://" + window.location.host + "/logshow/" + '?id=' + serverid );
+          wsa.onopen = function () {
+            wsa.send('exit')
+            console.log('websocket close');
         }
+            wsa.onmessage = function (evt) {
+                alert(evt.data)
+            }
+        wsa.onclose = function () {
+            wsa.close()
+        }
+
     });
 
     $('#update').click(function () {
         layer.msg('更新中',{time:0})
         var ip = $('#ip').text()
-        $.get('/update/',{'ip':ip},function (ret) {
+        $.get('manage/update/',{'ip':ip},function (ret) {
             var re = JSON.parse(ret)
             if (re.status == 0)
             {
-                layer.msg('更新成功',{icon:1,time:30000})
+                layer.msg('更新成功',{icon:1,time:3000})
                 location.reload()
             }
             else
             {
-                layer.msg(re.result,{icon:2,time:30000})
+                layer.msg(re.result,{icon:2,time:3000})
             }
 
         })
 
     })
 
-    </script>
+    $('#create').click(function () {
 
+    })
+
+    </script>
 {% endblock %}

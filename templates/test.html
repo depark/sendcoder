@@ -1,0 +1,55 @@
+{% extends 'index.html' %}
+{% block container %}
+
+<br><br><br><br><br>
+
+
+ <form id="'form">
+<div class="form-group" >
+    <label >输入虚拟机地址</label>
+    <input type="text" class="form-control" id='ip' name="ip" placeholder="ip" required="required">
+  </div>
+  <br>
+ <h3>初始化环境（单选框）</h3>
+<ul >
+	<label class="radio-inline">
+  <input type="radio" name="initname" id="inlineRadio1"  value="tomcat7" style="font-size: large">tomcat7
+</label>
+    <label class="radio-inline">
+  <input type="radio" name="initname" id="inlineRadio1"  value="jdk1.7" style="font-size: large">jdk1.7
+</label>
+</ul>
+    <button  id="button"  class="btn btn-primary text-right">提交</button>
+    <input id = 'buttons' type="button" value="222">
+</form>
+
+
+{% endblock %}
+{% block script %}
+<script>
+
+
+$('#buttons').click(function () {
+
+    var ip = $('#ip').val()
+    var ini = $('#inlineRadio1').val()
+    alert(ini)
+    var warning = $('#warning')
+    var name = document.getElementsByName('init-type').value
+    layer.msg('创建中',{time:0})
+    $.get('/tests',{'initname':ini,'ips':ip}, function (data) {
+        var data = JSON.parse(data)
+
+        if (data.success ==0){
+            layer.msg('创建成功')
+        }
+    })
+})
+
+
+
+
+
+
+</script>
+{% endblock %}

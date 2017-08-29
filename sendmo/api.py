@@ -89,16 +89,27 @@ def auto_start():
             print(i.ip+'  restart')
 
 def thread(a):
+    #检测dubbo健康
     code = check_dubbo('test')
     if code == 2:
         n = {'status': 1, 'result': 'dubbo 无法连接，检测失败'}
         return n
-    h = Host.objects.all()
+    h = Host.objects.filter(is_vitual=0)
     for i in h:
             t=threading.Thread(target=write_db,args=(i,))
             t.start()
     t.join()
-    n = {'status':0,'result':a+'检测成功'}
+
+    phy_host = Host.objects.filter(is_vitual=1)
+    for ip in phy_host:
+        result = os.system('ping -c 2 '+ip.ip+'>>/dev/null')
+        if result:
+            ip.status = 2
+
+        else:
+            ip.status = 1
+        ip.save()
+    n = {'status': 0, 'result': a + '检测成功'}
     #auto_start()
     return n
 
@@ -147,18 +158,23 @@ def mail(content):
 
 def update_info(ip):
     host = Host.objects.get(ip=ip)
+    if  host.system == 'windows':
+        t = {'status': 1, 'result': 'windows主机状态无法检测'}
+        return  t
     CPU = run(cpu,ip)
     MEM = run(mem,ip)
     DISK = run(disk,ip)
     ossys = run(system,ip)
-    host.cpu = CPU['result'].replace('b','').replace('\\n','').replace("'","")
-    host.memory = MEM['result'].replace('b','').replace('\\n','').replace("'","")
-    host.disk = DISK['result'].replace('b','').replace('\\n','').replace("'","")
-    host.system = ossys['result'].replace('b','').replace('\\n','').replace("'","")
+    host.cpu = CPU['result'][0]
+    host.memory = MEM['result'][0]
+    host.disk = DISK['result'][0]
+    host.system = ossys['result'][0]
+
     try:
         host.save()
         t = {'status':0,'result':'更新成功'}
     except Exception as e:
+        print(e)
         t = {'status':1,'result':'更新失败'}
 
     return t
