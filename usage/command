@@ -14,3 +14,8 @@ disk = lsblk | grep disk | gawk '{print $1,$4}'
 system = cat /etc/redhat-release
 
 
+n=Envir.objects.get(name='test1').service_set.all()   --> 所属环境应用列表
+
+for i in n:
+    for j in i.hosts.all():
+        print(j.ip)             -->所属环境主机ip

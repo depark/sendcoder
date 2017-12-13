@@ -1,4 +1,7 @@
 
-    <center><a href='{% url 'manindex' %}' class="btn btn-primary" style="font-size: xx-large;">项目管理</a></center>
+
+    {% for envi in envis %}
+        <center><a href='{% url 'manindex' envi.id %}' class="btn btn-primary" style="font-size: xx-large;">{{ envi.name }}</a></center>
+    {% endfor %}
     <center><a href="{% url 'showphy' %}" class="btn btn-primary" style="font-size: xx-large;">主机管理</a></center>
 

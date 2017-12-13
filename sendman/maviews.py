@@ -8,12 +8,13 @@ from dwebsocket import *
 # Create your views here.
 
 
-def index(request):
-    pro_ser = Service.objects.all().filter(type=0)
-    pro_hand = Service.objects.all().filter(type=1)
+def index(request,id):
+    print(id)
+    pro_ser = Envi.objects.get(id=id).service_set.filter(type=0)
+    pro_hand = Envi.objects.get(id=id).service_set.filter(type=1)
     type = Service.objects.all().values('type').distinct()
     #n = thread('all')
-    title = 'service list'
+    title = '测试环境'
     #thread(m='t')
     return render_to_response('index.html',locals())
 
@@ -43,9 +44,7 @@ def restart(request):
 
 
 def check(request):
-    ser = request.GET['server']
-    print(ser)
-    n = thread(ser)
+    n = thread()
     print(n)
     return HttpResponse(json.dumps(n))
 

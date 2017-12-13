@@ -31,11 +31,5 @@ def detial(request,id):
     vituals = []
     server = Host.objects.get(id=id)
     print(server)
-    if server.is_vitual == 1 and server.system != 'windows':
-        vit = run('virsh list',server.ip)
-        vits = vit['result'][2:-1]
-        for i in vits:
-            a=i.split()
-            c=a[1]+'   '+a[2]
-            vituals.append(c)
+
     return render_to_response('detail.html', locals())

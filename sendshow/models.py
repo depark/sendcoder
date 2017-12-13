@@ -21,12 +21,26 @@ VIRTUAL = (
     (1,'物理机'),
 )
 
+
+class Envi(models.Model):
+    '''
+    所属环境
+    '''
+    name = models.CharField(max_length=128,unique=True,blank=True)
+    dubbo_ip = models.GenericIPAddressField(unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+
+
 class Host(models.Model):
     '''
     主机列表
     '''
 
-    ip = models.CharField(max_length=32, unique=True,blank=True, null=False, verbose_name=u"主机IP")
+    ip = models.GenericIPAddressField(unique=True,verbose_name=u"主机IP")
     hostname = models.CharField(unique=True, max_length=128, verbose_name=u"主机名")
     port = models.IntegerField(blank=True, null=True,default=22, verbose_name=u"端口号")
     username = models.CharField(max_length=32, default='root',blank=True, null=True, verbose_name=u"管理用户名")
@@ -54,6 +68,7 @@ class Service(models.Model):
     name = models.CharField(max_length=50,verbose_name=u'应用/服务名')
     type = models.IntegerField(choices=SERVICE_STATUS,default=0,verbose_name='服务还是应用')
     hosts = models.ManyToManyField(Host,verbose_name=u'主机')
+    envi = models.ForeignKey(Envi,verbose_name='所属环境')
 
 
     def __str__(self):

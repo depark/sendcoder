@@ -6,9 +6,7 @@
       <button id='update' type='button' class="btn btn-success">更新信息</button>
   <a href="/" class="btn btn-success">返回首页</a>
     <a href="{% url 'showphy' %}" class="btn btn-success">返回主机列表</a>
-  {% if vituals %}
-   <button id='create' type='button' class="btn btn-success">创建虚拟机</button>
-  {% endif %}
+
   <div class="bs-example" data-example-id="hoverable-table">
     <table class="table table-hover">
 <br><br><br>
@@ -57,18 +55,7 @@
           <th style="font-size: large;color: #1cc09f">增加日期 </th>
           <td style="font-size: x-large">{{ server.date_added | date:'Y-m-d H:i:s'}}</td>
         </tr>
-      {% if vituals %}
-      <tr>
-          <th style="font-size: large;color: #1cc09f">所属虚拟机 </th>
-          <td class="text-center" style="font-size: x-large">
-              <div class="text-left">
-                  {% for vitual in vituals %}
-                  <p>{{ vitual }}</p>
-                    {% endfor %}
-              </div>
-          </td>
-        </tr>
-      {% endif %}
+
       </tbody>
 
 

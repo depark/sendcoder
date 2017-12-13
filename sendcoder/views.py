@@ -1,10 +1,12 @@
 from django.shortcuts import render,render_to_response,HttpResponse
 from time import sleep
 import json
+from sendshow.models import *
 
 
 def index(request):
-    return render_to_response('base.html')
+    envis = Envi.objects.all().order_by('name')
+    return render_to_response('base.html',locals())
 
 
 def test(request):

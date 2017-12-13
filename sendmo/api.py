@@ -50,7 +50,7 @@ def check_url(i,code):
         i.status = code
         i.save()
 
-def check_dubbo(ip):
+def check_dubbo(ip,dubbo_ip):
     socket.setdefaulttimeout(3)
     headers = {
         'Authorization':'Basic cm9vdDpyb290',
@@ -58,7 +58,7 @@ def check_dubbo(ip):
         'Connection': 'keep - alive',
     }
     try:
-        req = request.Request('http://172.16.1.112:8080/dubbo-admin/governance/addresses',headers=headers)
+        req = request.Request('http://{dubbo_ip}:8080/dubbo-admin/governance/addresses'.format(dubbo_ip=dubbo_ip),headers=headers)
         page = request.urlopen(req,timeout=2)
         pages = page.read().decode('utf-8')
         soup = BS(pages,'html.parser')
@@ -71,15 +71,19 @@ def check_dubbo(ip):
     except URLError as e:
         return 2
 
-def write_db(i):
-    s = check_dubbo(i.ip)
+def write_db(i,dubbo_ip):
+    print('start to check dubbo ip:{ip} and dubbo:{dubbo}'.format(ip=i.ip,dubbo=dubbo_ip))
+    s = check_dubbo(i.ip,dubbo_ip)
     if s == 0:
         i.status = 2
         i.save()
-    elif s == 1:
-        check_url(i,code=1)
-    elif s == 2:
-        check_url(i,code=0)
+    else:
+        i.status = 1
+        i.save()
+
+
+
+
 
 def auto_start():
     h = Host.objects.exclude(status=2)
@@ -88,17 +92,27 @@ def auto_start():
             restart_server(i.ip)
             print(i.ip+'  restart')
 
-def thread(a):
+def thread():
     #检测dubbo健康
-    code = check_dubbo('test')
-    if code == 2:
-        n = {'status': 1, 'result': 'dubbo 无法连接，检测失败'}
-        return n
-    h = Host.objects.filter(is_vitual=0)
-    for i in h:
-            t=threading.Thread(target=write_db,args=(i,))
-            t.start()
-    t.join()
+    dubbo_health={}
+    dubbos=Envi.objects.all()
+    for i in dubbos:
+        print('start to check '+i.dubbo_ip)
+        code = check_dubbo(ip='test',dubbo_ip=i.dubbo_ip)
+        if code == 2:
+            dubbo_health[i.dubbo_ip]='down'
+            return dubbo_health
+        #健康检测
+        hosts=Envi.objects.get(dubbo_ip=i.dubbo_ip).service_set.all()
+        for host in hosts:
+            for ip in host.hosts.all():
+                p=threading.Thread(target=write_db,args=(ip,i.dubbo_ip))
+                p.start()
+
+
+
+
+
 
     phy_host = Host.objects.filter(is_vitual=1)
     for ip in phy_host:
@@ -109,7 +123,7 @@ def thread(a):
         else:
             ip.status = 1
         ip.save()
-    n = {'status': 0, 'result': a + '检测成功'}
+    n = {'status': 0, 'result':  '检测成功'}
     #auto_start()
     return n
 
@@ -167,7 +181,7 @@ def update_info(ip):
     ossys = run(system,ip)
     host.cpu = CPU['result'][0]
     host.memory = MEM['result'][0]
-    host.disk = DISK['result'][0]
+    host.disk = str(DISK['result']).replace('[','').replace(']','')
     host.system = ossys['result'][0]
 
     try:

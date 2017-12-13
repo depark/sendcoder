@@ -13,6 +13,12 @@ class  Host_admin(admin.ModelAdmin):
 class Service_admin(admin.ModelAdmin):
     list_display = ('id','name','type')
 
+
+class Envi_admin(admin.ModelAdmin):
+    list_display = ('id','name','dubbo_ip')
+
+
 admin.site.register(Host,Host_admin)
 admin.site.register(Service,Service_admin)
+admin.site.register(Envi,Envi_admin)
 

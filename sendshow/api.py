@@ -8,6 +8,7 @@ import configparser
 from sendcoder.settings import BASE_DIR
 from sendshow.common import *
 import threading
+from paramiko.buffered_pipe import PipeTimeout
 
 
 conf = configparser.ConfigParser()
@@ -62,7 +63,7 @@ def run(command,server):
         t=paramiko.SSHClient()
         t.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         t.connect(hostname=server,username=user,password=password,port=port,timeout=3)
-        stdin, stdout, stderr = t.exec_command(command,get_pty=False)
+        stdin, stdout, stderr = t.exec_command(command,get_pty=False,timeout=3)
         out = stdout.readlines()
         err = stderr.readlines()
         status = 0
@@ -80,6 +81,9 @@ def run(command,server):
     except timeout as e:
         status = 1
         result = server + ' 连接超时'
+    except PipeTimeout as e:
+        status = 1
+        result = server + '重启超时'
     except NoValidConnectionsError as e:
         status = 1
         result = server + ' 端口错误'
