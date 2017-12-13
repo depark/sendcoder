@@ -22,10 +22,10 @@
  <div class="container">
  {% block container %}
     <div class="table-responsive  ">
-
+     <h2><p >测试环境: {{ title }}</p></h2><br>
     {% for i in type %}
         {% if i.type == 0 %}
-        <h1>应用列表 </h1>
+        <h4>应用列表 </h4>
     {% for i in pro_ser %}
     <table class="table table-bordered table-hover" >
       <caption ><h4>{{ i.name }} </h4>  <!--ul type='button' class="btn btn-success">发布</ul--> </caption>
@@ -60,7 +60,7 @@
         <br><br>
 {% endfor %}
     {% elif i.type == 1 %}
-        <h1>服务列表</h1>
+        <h4>服务列表</h4>
     {% for i in pro_hand %}
     <table class="table table-bordered table-hover" >
       <caption ><h4>{{ i.name }}</h4>  <!--ul type='button' class="btn btn-success">发布</ul--> </caption>

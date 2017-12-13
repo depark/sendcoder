@@ -14,7 +14,7 @@ def index(request,id):
     pro_hand = Envi.objects.get(id=id).service_set.filter(type=1)
     type = Service.objects.all().values('type').distinct()
     #n = thread('all')
-    title = '测试环境'
+    title = Envi.objects.get(id=id).name
     #thread(m='t')
     return render_to_response('index.html',locals())
 
